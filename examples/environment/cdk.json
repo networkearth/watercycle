@@ -1,0 +1,11 @@
+{
+    "app": "watercycle synth environment",
+    "context": {
+        "config": {
+            "account": "575101084097",
+            "region": "us-east-1",
+            "name": "watercycle-example",
+            "max_vcpus": 64
+        }
+    }
+}
