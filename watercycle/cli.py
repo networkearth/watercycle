@@ -5,31 +5,51 @@ import subprocess
 import click 
 
 from watercycle.environment.app import environment_app
+from watercycle.jobs.app import job_app
+from watercycle.jobs.docker import build_image, push_image
+from watercycle.execution_role.app import execution_role_app
+
+from watercycle.utils import run_command
+
 
 # pylint: disable=missing-function-docstring
 @click.group()
 def cli():
     pass
 
+
 @cli.command()
-@click.argument("deploy_type", type=click.Choice(["environment", "job"]))
+@click.argument("deploy_type", type=click.Choice(["environment", "job", "execution-role"]))
 def synth(deploy_type):
     if deploy_type == "environment":
         environment_app()
     elif deploy_type == "job":
-        pass
+        job_app()
+    elif deploy_type == "execution-role":
+        execution_role_app()
+
 
 @cli.command()
-def deploy():
-    os.system("cdk deploy *-vpc-stack")
-    os.system("cdk deploy *-ecr-stack")
-    os.system("cdk deploy *-batch-stack")
+@click.argument("deploy_type", type=click.Choice(["environment", "job", "container", "execution-role"]))
+def deploy(deploy_type):
+    if deploy_type == "environment":
+        run_command("cdk deploy *-vpc-stack")
+        run_command("cdk deploy *-ecr-stack")
+        run_command("cdk deploy *-batch-stack")
+    elif deploy_type == "container":
+        with open('cdk.json', 'r') as f:
+            config = json.load(f)['context']['config']
+        build_image(config)
+        push_image(config)
+    elif deploy_type in ["job", "execution-role"]:
+        run_command("cdk deploy")
+        
 
 @cli.command()
 @click.argument("profile")
 def login(profile):
     creds = json.loads(subprocess.getoutput(f'aws configure export-credentials --profile {profile}'))
-    with open('/root/.aws/credentials', 'w') as f:
+    with open(os.path.expanduser('~/.aws/credentials'), 'w') as f:
         f.write(f'[{profile}]\n')
         f.write(f'aws_access_key_id = {creds["AccessKeyId"]}\n')
         f.write(f'aws_secret_access_key = {creds["SecretAccessKey"]}\n')

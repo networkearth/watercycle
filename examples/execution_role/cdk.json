@@ -1,11 +1,11 @@
 {
-    "app": "watercycle synth environment",
+    "app": "watercycle synth execution-role",
     "context": {
         "config": {
             "account": "575101084097",
             "region": "us-east-1",
             "space": "watercycle-example",
-            "max_vcpus": 64
+            "execution_role": "example-role"
         }
     }
 }

@@ -8,16 +8,16 @@ from constructs import Construct
 
 
 def get_vpc_name(config: dict) -> str:
-    return "-".join([config["name"], "vpc"])
+    return "-".join([config["space"], "vpc"])
 
 def get_compute_environment_name(config: dict) -> str:
-    return "-".join([config["name"], "compute"])
+    return "-".join([config["space"], "compute"])
 
 def get_job_queue_name(config: dict) -> str:
-    return "-".join([config["name"], "job", "queue"])
+    return "-".join([config["space"], "job", "queue"])
 
 def get_repository_name(config: dict) -> str:
-    return config["name"]
+    return config["space"]
 
 
 class VPCStack(Stack):
