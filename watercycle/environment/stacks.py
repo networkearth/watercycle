@@ -28,7 +28,7 @@ class VPCStack(Stack):
         vpc_name = get_vpc_name(config)
 
         vpc = ec2.Vpc(
-            self, vpc_name,
+            self, vpc_name, vpc_name=vpc_name,
             max_azs=2,  # Number of availability zones to use
             cidr="10.0.0.0/16",  # CIDR block for the VPC
             subnet_configuration=[
