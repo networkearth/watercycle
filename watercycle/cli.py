@@ -8,6 +8,7 @@ from watercycle.environment.app import environment_app
 from watercycle.jobs.app import job_app
 from watercycle.jobs.docker import build_image, push_image
 from watercycle.execution_role.app import execution_role_app
+from watercycle.bucket.app import bucket_app
 
 from watercycle.utils import run_command
 
@@ -19,7 +20,7 @@ def cli():
 
 
 @cli.command()
-@click.argument("deploy_type", type=click.Choice(["environment", "job", "execution-role"]))
+@click.argument("deploy_type", type=click.Choice(["environment", "job", "execution-role", "bucket"]))
 def synth(deploy_type):
     if deploy_type == "environment":
         environment_app()
@@ -27,10 +28,12 @@ def synth(deploy_type):
         job_app()
     elif deploy_type == "execution-role":
         execution_role_app()
+    elif deploy_type == "bucket":
+        bucket_app()
 
 
 @cli.command()
-@click.argument("deploy_type", type=click.Choice(["environment", "job", "container", "execution-role"]))
+@click.argument("deploy_type", type=click.Choice(["environment", "job", "container", "execution-role", "bucket"]))
 def deploy(deploy_type):
     if deploy_type == "environment":
         run_command("cdk deploy *-vpc-stack")
@@ -41,7 +44,7 @@ def deploy(deploy_type):
             config = json.load(f)['context']['config']
         build_image(config)
         push_image(config)
-    elif deploy_type in ["job", "execution-role"]:
+    elif deploy_type in ["job", "execution-role", "bucket"]:
         run_command("cdk deploy")
         
 
