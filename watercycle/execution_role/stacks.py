@@ -23,6 +23,16 @@ class ExecutionRoleStack(Stack):
             )
         )
 
+        if config.get("run_batch", False):
+            execution_role.add_to_policy(
+                iam.PolicyStatement(
+                    actions=[
+                        "batch:SubmitJob",
+                    ],
+                    resources=["*"]
+                )
+            )
+
         execution_role.add_to_policy(
             iam.PolicyStatement(
                 actions=[
