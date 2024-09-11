@@ -7,7 +7,7 @@ from constructs import Construct
 
 
 def get_bucket_name(config: dict) -> str:
-    return "-".join([config["space"], config["name"]])
+    return "-".join([config["space"], config["bucket_name"]])
 
 
 class BucketStack(Stack):

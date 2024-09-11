@@ -19,6 +19,7 @@ class ExecutionRoleStack(Stack):
                 iam.ServicePrincipal("ecs-tasks.amazonaws.com"),
                 iam.ServicePrincipal("batch.amazonaws.com"),
                 iam.ServicePrincipal("ecs.amazonaws.com"),
+                iam.ServicePrincipal("lambda.amazonaws.com"),
             )
         )
 

@@ -9,6 +9,6 @@ def bucket_app():
 
     env = Environment(account=config["account"], region=config["region"])
 
-    bucket_stack = BucketStack(app, "-".join([config["space"], config["name"], "bucket", "stack"]), config=config, env=env)
+    bucket_stack = BucketStack(app, "-".join([config["space"], config["bucket_name"], "bucket", "stack"]), config=config, env=env)
 
     app.synth()

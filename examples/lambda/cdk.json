@@ -1,0 +1,14 @@
+{
+    "app": "watercycle synth lambda",
+    "context": {
+        "config": {
+            "account": "575101084097",
+            "region": "us-east-1",
+            "space": "watercycle-example",
+            "lambda_name": "hello-world",
+            "bucket_name": "bucket",
+            "memory_size": "128",
+            "execution_role": "example-role"
+        }
+    }
+}
