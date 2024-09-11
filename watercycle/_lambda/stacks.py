@@ -1,4 +1,5 @@
 from copy import copy
+from time import time
 
 from aws_cdk import (
     aws_lambda as _lambda,
@@ -16,6 +17,9 @@ class LambdaStack(Stack):
 
     def __init__(self, scope: Construct, id: str, config: dict, **kwargs) -> None:
         super().__init__(scope, id, **kwargs)
+
+        # forces code rebuild
+        version = str(int(time()))
 
         lambda_name = get_lambda_name(config)
 
