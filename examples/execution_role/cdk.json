@@ -5,7 +5,9 @@
             "account": "575101084097",
             "region": "us-east-1",
             "space": "watercycle-example",
-            "execution_role": "example-role"
+            "execution_role": "example-role",
+            "databases": ["example-database"],
+            "buckets": ["example-bucket"]
         }
     }
 }

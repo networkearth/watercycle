@@ -35,3 +35,49 @@ class ExecutionRoleStack(Stack):
                 resources=["*"]
             )
         )
+
+        for bucket in config.get("buckets", []):
+            bucket_name = "-".join([config["space"], bucket])
+            execution_role.add_to_policy(
+                iam.PolicyStatement(
+                    actions=[
+                        "s3:*",
+                    ],
+                    resources=[f"arn:aws:s3:::{bucket_name}*"]
+                )
+            )
+
+        if config.get("databases", []):
+            execution_role.add_to_policy(
+                iam.PolicyStatement(
+                    actions=[
+                        "glue:*",
+                    ],
+                    resources=["*"]
+                )
+            )
+            execution_role.add_to_policy(
+                iam.PolicyStatement(
+                    actions=[
+                        "athena:*",
+                    ],
+                    resources=["*"]
+                )
+            )
+            execution_role.add_to_policy(
+                iam.PolicyStatement(
+                    actions=[
+                        "s3:*",
+                    ],
+                    resources=["arn:aws:s3:::aws-athena-query-results*"]
+                )
+            )
+            for database in config["databases"]:
+                execution_role.add_to_policy(
+                    iam.PolicyStatement(
+                        actions=[
+                            "s3:*",
+                        ],
+                        resources=[f"arn:aws:s3:::{database}*"]
+                    )
+                )
