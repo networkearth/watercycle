@@ -78,6 +78,6 @@ class ExecutionRoleStack(Stack):
                         actions=[
                             "s3:*",
                         ],
-                        resources=[f"arn:aws:s3:::{database}*"]
+                        resources=[f"arn:aws:s3:::{database}-database*"]
                     )
                 )

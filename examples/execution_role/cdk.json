@@ -6,7 +6,7 @@
             "region": "us-east-1",
             "space": "watercycle-example",
             "execution_role": "example-role",
-            "databases": ["example-database"],
+            "databases": ["example"],
             "buckets": ["example-bucket"]
         }
     }
