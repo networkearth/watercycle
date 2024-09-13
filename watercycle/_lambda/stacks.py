@@ -37,4 +37,5 @@ class LambdaStack(Stack):
             },
             memory_size=int(config["memory_size"]),
             role=f"arn:aws:iam::{config['account']}:role/{lambda_role_name}",
+            timeout=int(config.get("timeout", 60)),
         )
