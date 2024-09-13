@@ -1,5 +1,13 @@
 # watercycle
-for deploying apps to the cloud
+Cloud development kit gives us a way to define our infrastructure as code. 
+Normally that code comprises roughly three parts. 
+
+1. A Stack (python)
+2. An App (python)
+3. Context and Configuration (json + python)
+
+`watercycle` makes life easier by allowing you to ignore the stack and app and just focus on the configuration.
+Once your configuration is setup (see below) you can run `watercycle deploy <deployment>` and it will take care of the rest.
 
 ## First Time Setup
 
@@ -8,23 +16,169 @@ nvm install 22
 pip install .
 ```
 
-## Running Deployments
-
-### Logging Into AWS
+## Logging Into AWS
 
 ```bash
 aws sso configure
-watercycle login <profile>
 export AWS_PROFILE=<profile>
+watercycle login <profile>
 ```
 
-### Order of Operations
+## Deployments
 
-1. Deploy environment (defines your `scope`)
-2. Deploy the execution-role (defines your `execution-role`)
-3. Deploy your job
-4. Deploy your container (note for this you have to be working on a machine with docker running)
+All deployments have the follow these (3) steps:
 
-## CDK Reference
+1. Create a directory for your deployment
+2. Fill out configuration
+3. Run `watercycle deploy <deployment>`
 
-https://docs.aws.amazon.com/cdk/api/v2/python/
+The following just describe what configuration needs to be provided. 
+
+### Environment
+
+Fill out a `cdk.json` like the following:
+
+```json
+{
+    "app": "watercycle synth environment",
+    "context": {
+        "config": {
+            "account": "575101084097",
+            "region": "us-east-1",
+            "space": "watercycle-example",
+            "max_vcpus": 64
+        }
+    }
+}
+```
+
+The `space` should be treated as a namespace. Everything else in your environment is going to refer
+to this in one way or another. The `max_vcpus` is the maximum number of vcpus that can be used in
+your environment. You can always come back and change `max_vcpus` later.
+
+This will create an environment with the name `<space>-environment`. The environment consists of a VPC,
+a security group, batch compute environment, and a job queue.
+
+### Execution Role
+
+Fill out a `cdk.json` like the following:
+
+```json
+{
+    "app": "watercycle synth execution-role",
+    "context": {
+        "config": {
+            "account": "575101084097",
+            "region": "us-east-1",
+            "space": "watercycle-example",
+            "execution_role": "example-role",
+            "databases": ["example"],
+            "buckets": ["example-bucket"],
+            "run_batch": true
+        }
+    }
+}
+```
+
+`databases` are which `haven` databases you want to give access to. `buckets` are which `s3` buckets. Note that the names should be whatever comes after the `space` you've chosen. so in the example above we are actually giving access to `watercycle-example-example-bucket`. `run_batch` is whether or not you want to be able to run batch jobs.
+
+This will create an execution role with the name `<space>-<execution_role>`.
+
+### Bucket
+
+Fill out a `cdk.json` like the following:
+
+```json
+{
+    "app": "watercycle synth bucket",
+    "context": {
+        "config": {
+            "account": "575101084097",
+            "region": "us-east-1",
+            "space": "watercycle-example",
+            "bucket_name": "bucket"
+        }
+    }
+}
+```
+
+This will create a bucket `<space>-<bucket_name>`. 
+
+### Job 
+
+Fill out a `cdk.json` like the following:
+
+```json
+{
+    "app": "watercycle synth job",
+    "context": {
+        "config":{
+            "space": "watercycle-example",
+            "job_name": "example-batch-job",
+            "memory": "2048",
+            "vcpu": "1",
+            "ephemeral_storage": "21",
+            "account": "575101084097",
+            "region": "us-east-1",
+            "execution_role": "example-role"
+        }
+        
+    }
+}
+```
+
+`memory` is the amount of memory in MB, `vcpu` is the number of vcpus, and `ephemeral_storage` is the amount of storage in GB. You'll get a job of the name `<space>-<job_name>`. Note that the execution role should only 
+include the part of the role name that comes after the `space`.
+
+In addition to building a job definition this will also build an ECR repository for your container.
+
+Note this is just a job definition, to complete building a batch job you'll need to deploy a container as well.
+
+### Container
+
+In the same directory as the `cdk.json` of your job you'll create a Dockerfile whose entry point is your application (see the example in `watercycle/examples/job`).
+
+Then on an instance with access to docker you'll run:
+
+```bash
+watercycle deploy container
+```
+
+Which will build and deploy the image. Note that you can only do this after you've deployed the job. 
+
+### Lambda 
+
+Fill out a `cdk.json` like the following:
+
+```json
+{
+    "app": "watercycle synth lambda",
+    "context": {
+        "config": {
+            "account": "575101084097",
+            "region": "us-east-1",
+            "space": "watercycle-example",
+            "lambda_name": "hello-world",
+            "bucket_name": "bucket",
+            "memory_size": "128",
+            "execution_role": "example-role"
+        }
+    }
+}
+```
+
+`memory_size` is the amount of memory in MB. You'll get a lambda of the name `<space>-<lambda_name>`. Note that the `execution_role` should only be the part of the role name that comes after the `space`. `bucket_name` is the name of the bucket where the lambda code is stored.
+
+In addition to the `cdk.json` described above you'll also need to create a `function.py` file like the following:
+
+```python
+def handler(event, context):
+    print("Hello, CDK!")
+    return {
+        'statusCode': 200,
+        'body': 'Hello, World!'
+    }
+```
+
+whatever is in `handler` will be the entry point for your lambda.
+
