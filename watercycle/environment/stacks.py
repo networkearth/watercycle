@@ -36,14 +36,8 @@ class VPCStack(Stack):
                     name="PublicSubnet",
                     subnet_type=ec2.SubnetType.PUBLIC,
                     cidr_mask=24  # Each public subnet will get a /24 block
-                ),
-                ec2.SubnetConfiguration(
-                    name="PrivateSubnet",
-                    subnet_type=ec2.SubnetType.PRIVATE_WITH_NAT,
-                    cidr_mask=24  # Each private subnet will get a /24 block
                 )
-            ],
-            nat_gateways=1  # Number of NAT gateways for the private subnets
+            ]
         )
 
 
@@ -60,7 +54,7 @@ class BatchStack(Stack):
         )
 
         private_subnets = [
-            subnet.subnet_id for subnet in vpc.private_subnets
+            subnet.subnet_id for subnet in vpc.public_subnets
         ]
 
         compute_environment_name = get_compute_environment_name(config)
@@ -73,11 +67,11 @@ class BatchStack(Stack):
             allow_all_outbound=True,
         )
 
-        security_group.add_ingress_rule(
-            ec2.Peer.any_ipv4(),
-            ec2.Port.tcp(22),
-            "Allow SSH Access"
-        )
+        #security_group.add_ingress_rule(
+        #    ec2.Peer.any_ipv4(),
+        #    ec2.Port.tcp(22),
+        #    "Allow SSH Access"
+        #)
 
         compute_environment = batch.CfnComputeEnvironment(
             self, 
