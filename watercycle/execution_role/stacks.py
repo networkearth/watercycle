@@ -92,3 +92,50 @@ class ExecutionRoleStack(Stack):
                         resources=[f"arn:aws:s3:::{database}-database*"]
                     )
                 )
+
+        if config.get("run_emr", False):
+            execution_role.add_to_policy(
+                iam.PolicyStatement(
+                    actions=[
+                        "elasticmapreduce:CreateStudioPresignedUrl",
+                        "elasticmapreduce:DescribeStudio",
+                        "elasticmapreduce:CreateStudio",
+                        "elasticmapreduce:ListStudios"
+                    ],
+                    resources=["*"]
+                )
+            )
+
+            execution_role.add_to_policy(
+                iam.PolicyStatement(
+                    actions=[
+                        "emr-serverless:*"
+                    ],
+                    resources=["*"]
+                )
+            )
+
+            execution_role.add_to_policy(
+                iam.PolicyStatement(
+                    actions=[
+                        "ec2:CreateNetworkInterface"
+                    ],
+                    resources=[
+                        "arn:aws:ec2:*:*:network-interface/*"
+                    ],
+                    conditions={
+                        "StringEquals": {
+                            "aws:CalledViaLast": "ops.emr-serverless.amazonaws.com"
+                        }
+                    }
+                )
+            )
+
+            execution_role.add_to_policy(
+                iam.PolicyStatement(
+                    actions=[
+                        "iam:CreateServiceLinkedRole"
+                    ],
+                    resources=["arn:aws:iam::*:role/aws-service-role/*"]
+                )
+            )

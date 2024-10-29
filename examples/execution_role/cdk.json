@@ -8,7 +8,8 @@
             "execution_role": "example-role",
             "databases": ["example"],
             "buckets": ["example-bucket"],
-            "run_batch": true
+            "run_batch": true,
+            "run_emr": true
         }
     }
 }
