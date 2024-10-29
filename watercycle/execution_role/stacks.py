@@ -20,6 +20,7 @@ class ExecutionRoleStack(Stack):
                 iam.ServicePrincipal("batch.amazonaws.com"),
                 iam.ServicePrincipal("ecs.amazonaws.com"),
                 iam.ServicePrincipal("lambda.amazonaws.com"),
+                iam.ServicePrincipal("emr-serverless.amazonaws.com"),
             )
         )
 
@@ -92,3 +93,38 @@ class ExecutionRoleStack(Stack):
                         resources=[f"arn:aws:s3:::{database}-database*"]
                     )
                 )
+
+        if config.get("run_emr", False):
+            execution_role.add_to_policy(
+                iam.PolicyStatement(
+                    actions=[
+                        "s3:GetObject",
+                        "s3:ListBucket"
+                    ],
+                    resources=[
+                        "arn:aws:s3:::*.elasticmapreduce",
+                        "arn:aws:s3:::*.elasticmapreduce/*"
+                    ]
+                )
+            )
+
+            execution_role.add_to_policy(
+                iam.PolicyStatement(
+                    actions=[
+                        "glue:GetDatabase",
+                        "glue:CreateDatabase",
+                        "glue:GetDataBases",
+                        "glue:CreateTable",
+                        "glue:GetTable",
+                        "glue:UpdateTable",
+                        "glue:DeleteTable",
+                        "glue:GetTables",
+                        "glue:GetPartition",
+                        "glue:GetPartitions",
+                        "glue:CreatePartition",
+                        "glue:BatchCreatePartition",
+                        "glue:GetUserDefinedFunctions"
+                    ],
+                    resources=["*"]
+                )
+            )
