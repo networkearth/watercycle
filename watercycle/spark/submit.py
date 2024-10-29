@@ -20,10 +20,12 @@ def submit_spark_job(config):
 
     s3.Bucket(bucket).upload_file(config["entrypoint"], entrypoint_key)
 
+    execution_role_arn = f"arn:aws:iam::{config['account']}:role/{get_role_name(config)}"
+
     response = client.start_job_run(
         applicationId=application_id,
         name=config['name'],
-        executionRoleArn=get_role_name(config),
+        executionRoleArn=execution_role_arn,
         jobDriver={
             'sparkSubmit': {
                 'entryPoint': f"s3://{bucket}/{entrypoint_key}",
