@@ -182,3 +182,56 @@ def handler(event, context):
 
 whatever is in `handler` will be the entry point for your lambda.
 
+### EMR (Elastic Map Reduce Application)
+
+Fill out a `config.json` like the following:
+
+```json
+{
+    "name": "watercycle-example",
+    "max_vcpus": 8,
+    "max_memory": 32,
+    "max_disk": 100
+}
+```
+
+`name` is the name of the application. `max_vcpus` is the maximum number of vcpus that can be used in the application. `max_memory` is the maximum amount of memory in GB. `max_disk` is the maximum amount of disk space in GB.
+
+This will create an EMR application with the name `<name>`.
+
+Note that recreating an application actually deletes the old application and creates a new one.
+
+## Submissions
+
+All submissions have the follow these (3) steps:
+
+1. Create a directory for your submission
+2. Fill out configuration
+3. Run `watercycle submit <deployment>`
+
+The following just describe what configuration needs to be provided. 
+
+### Spark (Job)
+
+You'll need to fill out a `config.json` like the following:
+
+```json
+{
+    "account": "575101084097",
+    "application_name": "watercycle-example",
+    "space": "watercycle-example",
+    "execution_role": "example-role",
+    "bucket": "bucket",
+    
+    "name": "example-spark-job",
+    "entrypoint": "wordcount.py"
+}
+```
+
+`account` is the account number. `application_name` is the name of the application. `space` is the namespace. `execution_role` is the name of the execution role. `bucket` is the name of the bucket where the job is stored. `name` is the name of the job. `entrypoint` is the entrypoint for the job.
+
+You'll also need the file pointed to by `entrypoint` in the same directory as the `config.json`. And that file
+will contain your actual spark job code. 
+
+Upon submission, `watercycle` will put your entrypoint code into the bucket at `spark/<application_name>/<name>/` and then
+submit the job to the EMR application. 
