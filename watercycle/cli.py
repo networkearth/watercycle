@@ -10,6 +10,7 @@ from watercycle.jobs.docker import build_image, push_image
 from watercycle.execution_role.app import execution_role_app
 from watercycle.bucket.app import bucket_app
 from watercycle._lambda.app import lambda_app, deploy_lambda_code
+from watercycle.emr.app import create_emr_application
 
 from watercycle.utils import run_command
 
@@ -36,7 +37,13 @@ def synth(deploy_type):
 
 
 @cli.command()
-@click.argument("deploy_type", type=click.Choice(["environment", "job", "container", "execution-role", "bucket", "lambda"]))
+@click.argument(
+    "deploy_type", 
+    type=click.Choice([
+        "environment", "job", "container", "execution-role", "bucket", 
+        "lambda", "emr",
+    ])
+)
 def deploy(deploy_type):
     if deploy_type == "environment":
         run_command("cdk deploy *-vpc-stack")
@@ -52,6 +59,10 @@ def deploy(deploy_type):
     elif deploy_type == "lambda":
         deploy_lambda_code()
         run_command("cdk deploy")
+    elif deploy_type == "emr":
+        with open('config.json', 'r') as f:
+            config = json.load(f)
+        create_emr_application(config)
         
 
 @cli.command()

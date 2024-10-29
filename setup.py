@@ -8,6 +8,7 @@ setup(
     packages=find_packages(include=["watercycle", "watercycle*"]),
     install_requires=[
         "aws-cdk-lib==2.154.1",
+        "boto3==1.35.50",
         "click==8.1.7",
     ],
     entry_points={
