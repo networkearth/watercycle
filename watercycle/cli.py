@@ -12,6 +12,8 @@ from watercycle.bucket.app import bucket_app
 from watercycle._lambda.app import lambda_app, deploy_lambda_code
 from watercycle.emr.app import create_emr_application
 
+from watercycle.spark.submit import submit_spark_job
+
 from watercycle.utils import run_command
 
 
@@ -63,7 +65,14 @@ def deploy(deploy_type):
         with open('config.json', 'r') as f:
             config = json.load(f)
         create_emr_application(config)
-        
+
+@cli.command()
+@click.argument("submit_type", type=click.Choice(["spark"]))
+def submit(submit_type):
+    if submit_type == "spark":
+        with open('config.json', 'r') as f:
+            config = json.load(f)
+        submit_spark_job(config)
 
 @cli.command()
 @click.argument("profile")

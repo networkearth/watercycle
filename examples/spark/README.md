@@ -1,0 +1,1 @@
+`wordcount.py` from https://docs.aws.amazon.com/emr/latest/EMR-Serverless-UserGuide/gs-cli.html

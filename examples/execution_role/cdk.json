@@ -7,7 +7,7 @@
             "space": "watercycle-example",
             "execution_role": "example-role",
             "databases": ["example"],
-            "buckets": ["example-bucket"],
+            "buckets": ["bucket"],
             "run_batch": true,
             "run_emr": true
         }
