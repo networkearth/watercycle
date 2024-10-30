@@ -6,5 +6,6 @@
     "bucket": "bucket",
     
     "name": "example-spark-job",
-    "entrypoint": "wordcount.py"
+    "entrypoint": "wordcount.py",
+    "arguments": ["s3://watercycle-example-bucket/spark/output"]
 }

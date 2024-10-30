@@ -16,7 +16,6 @@ def submit_spark_job(config):
     bucket = f"{config['space']}-{config['bucket']}"
     prefix = f"spark/{config['application_name']}/{config['name']}"
     entrypoint_key = f"{prefix}/{config['entrypoint']}"
-    outputs_dir = f"{prefix}/output"
 
     s3.Bucket(bucket).upload_file(config["entrypoint"], entrypoint_key)
 
@@ -29,7 +28,7 @@ def submit_spark_job(config):
         jobDriver={
             'sparkSubmit': {
                 'entryPoint': f"s3://{bucket}/{entrypoint_key}",
-                'entryPointArguments': [f"s3://{bucket}/{outputs_dir}"],
+                'entryPointArguments': config["arguments"],
                 'sparkSubmitParameters': "--conf spark.executor.cores=1 --conf spark.executor.memory=4g --conf spark.driver.cores=1 --conf spark.driver.memory=4g --conf spark.executor.instances=1"
             },
         },
