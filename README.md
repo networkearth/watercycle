@@ -201,6 +201,24 @@ This will create an EMR application with the name `<name>`.
 
 Note that recreating an application actually deletes the old application and creates a new one.
 
+### Spark Venv
+
+Fill out a `config.json` like the following:
+
+```json
+{
+    "application_name": "watercycle-example",
+    "space": "watercycle-example",
+    "bucket": "bucket",
+    "name": "example-venv"
+}
+```
+
+`application_name` is the name of the application. `space` is the namespace. `bucket` is the name of the bucket where the virtual environment is stored. `name` is the name of the virtual environment.
+
+Then update the dockerfile in the examples to include what you want in your venv. Then watercycle will build 
+and export the venv to the bucket.
+
 ## Submissions
 
 All submissions have the follow these (3) steps:
@@ -224,11 +242,13 @@ You'll need to fill out a `config.json` like the following:
     "bucket": "bucket",
     
     "name": "example-spark-job",
-    "entrypoint": "wordcount.py"
+    "entrypoint": "wordcount.py",
+    "arguments": ["s3://watercycle-example-bucket/spark/output"],
+    "venv": "example-venv"
 }
 ```
 
-`account` is the account number. `application_name` is the name of the application. `space` is the namespace. `execution_role` is the name of the execution role. `bucket` is the name of the bucket where the job is stored. `name` is the name of the job. `entrypoint` is the entrypoint for the job.
+`account` is the account number. `application_name` is the name of the application. `space` is the namespace. `execution_role` is the name of the execution role. `bucket` is the name of the bucket where the job is stored. `name` is the name of the job. `entrypoint` is the entrypoint for the job. `arguments` are the arguments to the job. `venv` is the name of the virtual environment to use. 
 
 You'll also need the file pointed to by `entrypoint` in the same directory as the `config.json`. And that file
 will contain your actual spark job code. 

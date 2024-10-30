@@ -1,0 +1,6 @@
+{
+    "application_name": "watercycle-example",
+    "space": "watercycle-example",
+    "bucket": "bucket",
+    "name": "example-venv"
+}

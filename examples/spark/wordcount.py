@@ -16,6 +16,9 @@ import sys
 import pyspark.sql.functions as F
 from pyspark.sql import SparkSession
 
+# test the venv
+import great_expectations
+
 if __name__ == "__main__":
     """
         Usage: wordcount [destination path]

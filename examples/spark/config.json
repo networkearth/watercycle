@@ -7,5 +7,6 @@
     
     "name": "example-spark-job",
     "entrypoint": "wordcount.py",
-    "arguments": ["s3://watercycle-example-bucket/spark/output"]
+    "arguments": ["s3://watercycle-example-bucket/spark/output"],
+    "venv": "example-venv"
 }

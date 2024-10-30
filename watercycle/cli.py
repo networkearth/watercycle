@@ -11,6 +11,7 @@ from watercycle.execution_role.app import execution_role_app
 from watercycle.bucket.app import bucket_app
 from watercycle._lambda.app import lambda_app, deploy_lambda_code
 from watercycle.emr.app import create_emr_application
+from watercycle.spark_venv.app import build_spark_venv
 
 from watercycle.spark.submit import submit_spark_job
 
@@ -43,7 +44,7 @@ def synth(deploy_type):
     "deploy_type", 
     type=click.Choice([
         "environment", "job", "container", "execution-role", "bucket", 
-        "lambda", "emr",
+        "lambda", "emr", "spark-venv",
     ])
 )
 def deploy(deploy_type):
@@ -65,6 +66,10 @@ def deploy(deploy_type):
         with open('config.json', 'r') as f:
             config = json.load(f)
         create_emr_application(config)
+    elif deploy_type == "spark-venv":
+        with open('config.json', 'r') as f:
+            config = json.load(f)
+        build_spark_venv(config)
 
 @cli.command()
 @click.argument("submit_type", type=click.Choice(["spark"]))
