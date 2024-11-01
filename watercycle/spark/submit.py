@@ -24,7 +24,7 @@ def submit_spark_job(config):
     resource_conf = "--conf spark.executor.cores=1 --conf spark.executor.memory=4g --conf spark.driver.cores=1 --conf spark.driver.memory=4g --conf spark.executor.instances=1"
     
     venv_key = f"spark-venv/{config['application_name']}/{config['venv']}.tar.gz"
-    venv_conf = f"--conf spark.archives=s3://{bucket}/{venv_key}#environment --conf spark.emr-serverless.driverEnv.PYSPARK_DRIVER_PYTHON=./environment/bin/python --conf spark.emr-serverless.driverEnv.PYSPARK_PYTHON=./environment/bin/python --conf spark.executorEnv.PYSPARK_PYTHON=./environment/bin/python"
+    venv_conf = f"--conf spark.archives=s3://{bucket}/{venv_key}#environment --conf spark.emr-serverless.driverEnv.PYSPARK_DRIVER_PYTHON=./environment/bin/python --conf spark.emr-serverless.driverEnv.PYSPARK_PYTHON=./environment/bin/python --conf spark.executorEnv.PYSPARK_PYTHON=./environment/bin/python --conf spark.jars=s3://mirrorverse-emr/jars/AthenaJDBC42-2.0.33.jar"
 
     response = client.start_job_run(
         applicationId=application_id,
