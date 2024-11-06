@@ -20,7 +20,7 @@ def create_emr_application(config):
         print("Creating Application...")
         response = client.create_application(
             name=config['name'],
-            releaseLabel='emr-6.6.0',
+            releaseLabel='emr-7.3.0',
             type="SPARK",
             maximumCapacity={
                 'cpu': str(config['max_vcpus']),

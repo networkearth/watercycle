@@ -1,5 +1,8 @@
 # DO NOT CHANGE THIS
-FROM --platform=linux/amd64 amazonlinux:2 AS base
+FROM --platform=linux/amd64 amazonlinux:2023 AS base
+# the above must have the same version of python 
+# as the EMR version you are using for the following
+# to work otherwise it just ignores your packages
 
 RUN yum install -y python3
 
