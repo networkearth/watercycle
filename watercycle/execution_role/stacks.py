@@ -128,3 +128,13 @@ class ExecutionRoleStack(Stack):
                     resources=["*"]
                 )
             )
+
+        for arn in config.get("bucket_arns", []):
+            execution_role.add_to_policy(
+                iam.PolicyStatement(
+                    actions=[
+                        "s3:*",
+                    ],
+                    resources=[f"{arn}*"]
+                )
+            )
